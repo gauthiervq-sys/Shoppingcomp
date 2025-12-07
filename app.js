@@ -135,9 +135,11 @@ class ShoppingListApp {
         }
 
         const bestResult = results[0];
+        const hasCompleteStores = results.some(r => r.allItemsAvailable);
 
         results.forEach((result, index) => {
-            const isBestOption = index === 0 && result.allItemsAvailable;
+            // Only mark as best if it has all items AND is first in the list
+            const isBestOption = index === 0 && result.allItemsAvailable && hasCompleteStores;
             
             const resultDiv = document.createElement('div');
             resultDiv.className = `store-result ${isBestOption ? 'best-option' : ''}`;
@@ -147,6 +149,11 @@ class ShoppingListApp {
                 : `⚠️ ${result.availableItems}/${result.totalItems} items available`;
 
             const itemBreakdownHtml = this.generateItemBreakdown(result);
+            
+            // Show note if store has incomplete items
+            const incompleteNote = !result.allItemsAvailable && hasCompleteStores 
+                ? '<div style="font-size: 0.85rem; color: #f59e0b; margin-top: 8px;">⚠️ Price shown is incomplete due to unavailable items</div>'
+                : '';
 
             resultDiv.innerHTML = `
                 <div class="store-header">
@@ -161,6 +168,7 @@ class ShoppingListApp {
                         <div class="total-price">€${result.totalPrice.toFixed(2)}</div>
                     </div>
                 </div>
+                ${incompleteNote}
                 <div class="item-breakdown">
                     ${itemBreakdownHtml}
                 </div>
