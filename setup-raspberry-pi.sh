@@ -41,9 +41,9 @@ npm install
 # Test the server
 echo ""
 echo "Testing the server..."
-timeout 5 node server.js &
+timeout 10 node server.js &
 SERVER_PID=$!
-sleep 3
+sleep 5
 
 if ps -p $SERVER_PID > /dev/null; then
     echo "✓ Server test successful"

@@ -8,15 +8,28 @@
 const express = require('express');
 const path = require('path');
 const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 
+// Rate limiting to prevent abuse
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 1000, // Limit each IP to 1000 requests per windowMs (generous for local use)
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+app.use(limiter);
+
 // Enable compression for better performance on Raspberry Pi
 app.use(compression());
 
 // Serve static files from the current directory
+// Note: This serves all files in the project root. Sensitive files like
+// .env should be listed in .gitignore and not deployed to production.
 app.use(express.static(__dirname, {
     maxAge: '1d', // Cache static files for 1 day
     etag: true
