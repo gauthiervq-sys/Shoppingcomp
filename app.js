@@ -3,12 +3,17 @@
 class ShoppingListApp {
     constructor() {
         this.shoppingList = [];
+        this.selectedCategory = null;
         this.initializeElements();
+        this.populateCategories();
+        this.populateProducts();
         this.attachEventListeners();
     }
 
     initializeElements() {
-        this.itemInput = document.getElementById('item-input');
+        this.categoryList = document.getElementById('category-list');
+        this.productSelect = document.getElementById('product-select');
+        this.brandSelect = document.getElementById('brand-select');
         this.addItemBtn = document.getElementById('add-item-btn');
         this.shoppingListEl = document.getElementById('shopping-list');
         this.compareBtn = document.getElementById('compare-btn');
@@ -16,38 +21,146 @@ class ShoppingListApp {
         this.resultsContainer = document.getElementById('results-container');
     }
 
+    populateCategories() {
+        this.categoryList.innerHTML = '';
+        
+        // Add "All Products" option
+        const allCategory = document.createElement('div');
+        allCategory.className = 'category-item active';
+        allCategory.textContent = 'All Products';
+        allCategory.dataset.category = 'all';
+        this.categoryList.appendChild(allCategory);
+        
+        // Add all categories
+        for (const [key, label] of Object.entries(categories)) {
+            const categoryItem = document.createElement('div');
+            categoryItem.className = 'category-item';
+            categoryItem.textContent = label;
+            categoryItem.dataset.category = key;
+            this.categoryList.appendChild(categoryItem);
+        }
+    }
+
+    populateProducts(filterCategory = null) {
+        const currentValue = this.productSelect.value;
+        this.productSelect.innerHTML = '<option value="">-- Choose a product --</option>';
+        
+        for (const [key, product] of Object.entries(availableProducts)) {
+            if (filterCategory && filterCategory !== 'all' && product.category !== filterCategory) {
+                continue;
+            }
+            
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = product.name;
+            option.dataset.category = product.category;
+            option.dataset.hasHouse = product.hasHouseBrand;
+            option.dataset.hasPremium = product.hasPremiumBrand;
+            this.productSelect.appendChild(option);
+        }
+        
+        // Restore selection if it still exists
+        if (currentValue && this.productSelect.querySelector(`option[value="${currentValue}"]`)) {
+            this.productSelect.value = currentValue;
+            this.updateBrandOptions();
+        }
+    }
+
+    updateBrandOptions() {
+        const selectedOption = this.productSelect.selectedOptions[0];
+        if (!selectedOption || !selectedOption.value) {
+            this.brandSelect.innerHTML = '<option value="house">House Brand (Huismerk)</option>';
+            this.brandSelect.disabled = true;
+            return;
+        }
+        
+        const hasHouse = selectedOption.dataset.hasHouse === 'true';
+        const hasPremium = selectedOption.dataset.hasPremium === 'true';
+        
+        this.brandSelect.innerHTML = '';
+        
+        if (hasHouse) {
+            const houseOption = document.createElement('option');
+            houseOption.value = 'house';
+            houseOption.textContent = 'House Brand (Huismerk)';
+            this.brandSelect.appendChild(houseOption);
+        }
+        
+        if (hasPremium) {
+            const premiumOption = document.createElement('option');
+            premiumOption.value = 'premium';
+            premiumOption.textContent = 'Premium Brand';
+            this.brandSelect.appendChild(premiumOption);
+        }
+        
+        this.brandSelect.disabled = false;
+    }
+
     attachEventListeners() {
-        this.addItemBtn.addEventListener('click', () => this.addItem());
-        this.itemInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.addItem();
+        // Category selection
+        this.categoryList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('category-item')) {
+                // Update active state
+                this.categoryList.querySelectorAll('.category-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                
+                // Filter products
+                const category = e.target.dataset.category;
+                this.selectedCategory = category === 'all' ? null : category;
+                this.populateProducts(this.selectedCategory);
             }
         });
+        
+        // Product selection change
+        this.productSelect.addEventListener('change', () => {
+            this.updateBrandOptions();
+        });
+        
+        // Add item button
+        this.addItemBtn.addEventListener('click', () => this.addItem());
+        
+        // Compare button
         this.compareBtn.addEventListener('click', () => this.compareStores());
     }
 
     addItem() {
-        const itemName = this.itemInput.value.trim().toLowerCase();
+        const productKey = this.productSelect.value;
+        const brandType = this.brandSelect.value;
         
-        if (!itemName) {
-            alert('Please enter an item name');
+        if (!productKey) {
+            alert('Please select a product');
             return;
         }
-
-        if (this.shoppingList.includes(itemName)) {
+        
+        const product = availableProducts[productKey];
+        const itemId = `${productKey}-${brandType}`;
+        
+        // Check if item already in list
+        if (this.shoppingList.some(item => item.id === itemId)) {
             alert('This item is already in your shopping list');
             return;
         }
-
-        this.shoppingList.push(itemName);
+        
+        this.shoppingList.push({
+            id: itemId,
+            productKey: productKey,
+            productName: product.name,
+            brandType: brandType,
+            brandLabel: brandType === 'house' ? 'House Brand' : 'Premium Brand'
+        });
+        
         this.renderShoppingList();
-        this.itemInput.value = '';
-        this.itemInput.focus();
         this.updateCompareButton();
+        
+        // Reset selection
+        this.productSelect.value = '';
+        this.updateBrandOptions();
     }
 
-    removeItem(itemName) {
-        this.shoppingList = this.shoppingList.filter(item => item !== itemName);
+    removeItem(itemId) {
+        this.shoppingList = this.shoppingList.filter(item => item.id !== itemId);
         this.renderShoppingList();
         this.updateCompareButton();
         this.hideResults();
@@ -59,12 +172,15 @@ class ShoppingListApp {
         this.shoppingList.forEach(item => {
             const li = document.createElement('li');
             li.innerHTML = `
-                <span class="item-name">${this.capitalizeFirst(item)}</span>
-                <button class="remove-btn" data-item="${item}">Remove</button>
+                <div>
+                    <span class="item-name">${item.productName}</span>
+                    <span class="item-brand">${item.brandLabel}</span>
+                </div>
+                <button class="remove-btn" data-item-id="${item.id}">Remove</button>
             `;
             
             const removeBtn = li.querySelector('.remove-btn');
-            removeBtn.addEventListener('click', () => this.removeItem(item));
+            removeBtn.addEventListener('click', () => this.removeItem(item.id));
             
             this.shoppingListEl.appendChild(li);
         });
@@ -72,10 +188,6 @@ class ShoppingListApp {
 
     updateCompareButton() {
         this.compareBtn.disabled = this.shoppingList.length === 0;
-    }
-
-    capitalizeFirst(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
     compareStores() {
@@ -89,12 +201,39 @@ class ShoppingListApp {
             const itemPrices = {};
 
             this.shoppingList.forEach(item => {
-                if (store.products[item] !== undefined) {
-                    itemPrices[item] = store.products[item];
-                    totalPrice += store.products[item];
-                    availableItems++;
+                const productData = store.products[item.productKey];
+                
+                if (productData !== undefined) {
+                    // Get price based on brand type
+                    let price = null;
+                    
+                    if (item.brandType === 'house' && productData.house !== undefined) {
+                        price = productData.house;
+                    } else if (item.brandType === 'premium' && productData.premium !== undefined) {
+                        price = productData.premium;
+                    }
+                    
+                    if (price !== null) {
+                        itemPrices[item.id] = {
+                            name: item.productName,
+                            brand: item.brandLabel,
+                            price: price
+                        };
+                        totalPrice += price;
+                        availableItems++;
+                    } else {
+                        itemPrices[item.id] = {
+                            name: item.productName,
+                            brand: item.brandLabel,
+                            price: null
+                        };
+                    }
                 } else {
-                    itemPrices[item] = null; // Item not available
+                    itemPrices[item.id] = {
+                        name: item.productName,
+                        brand: item.brandLabel,
+                        price: null
+                    };
                 }
             });
 
@@ -109,16 +248,10 @@ class ShoppingListApp {
             };
         });
 
-        // Filter stores that have all items available
-        const storesWithAllItems = storeResults.filter(result => result.allItemsAvailable);
-
-        // Sort by total price (ascending)
+        // Sort by availability first, then by price
         storeResults.sort((a, b) => {
-            // Prioritize stores with all items
             if (a.allItemsAvailable && !b.allItemsAvailable) return -1;
             if (!a.allItemsAvailable && b.allItemsAvailable) return 1;
-            
-            // Then sort by price
             return a.totalPrice - b.totalPrice;
         });
 
@@ -134,11 +267,9 @@ class ShoppingListApp {
             return;
         }
 
-        const bestResult = results[0];
         const hasCompleteStores = results.some(r => r.allItemsAvailable);
 
         results.forEach((result, index) => {
-            // Only mark as best if it has all items AND is first in the list
             const isBestOption = index === 0 && result.allItemsAvailable && hasCompleteStores;
             
             const resultDiv = document.createElement('div');
@@ -150,7 +281,6 @@ class ShoppingListApp {
 
             const itemBreakdownHtml = this.generateItemBreakdown(result);
             
-            // Show note if store has incomplete items
             const incompleteNote = !result.allItemsAvailable && hasCompleteStores 
                 ? '<div style="font-size: 0.85rem; color: #f59e0b; margin-top: 8px;">⚠️ Price shown is incomplete due to unavailable items</div>'
                 : '';
@@ -184,11 +314,17 @@ class ShoppingListApp {
     generateItemBreakdown(result) {
         let html = '<details><summary>View item prices</summary><ul class="item-list">';
         
-        for (const [item, price] of Object.entries(result.itemPrices)) {
-            if (price !== null) {
-                html += `<li><span>${this.capitalizeFirst(item)}</span><span>€${price.toFixed(2)}</span></li>`;
+        for (const [itemId, itemData] of Object.entries(result.itemPrices)) {
+            if (itemData.price !== null) {
+                html += `<li>
+                    <span>${itemData.name} <em>(${itemData.brand})</em></span>
+                    <span>€${itemData.price.toFixed(2)}</span>
+                </li>`;
             } else {
-                html += `<li><span>${this.capitalizeFirst(item)}</span><span class="unavailable">Not available</span></li>`;
+                html += `<li>
+                    <span>${itemData.name} <em>(${itemData.brand})</em></span>
+                    <span class="unavailable">Not available</span>
+                </li>`;
             }
         }
         

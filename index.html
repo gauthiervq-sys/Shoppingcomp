@@ -14,26 +14,49 @@
         </header>
 
         <main>
-            <section class="shopping-list-section">
-                <h2>Your Shopping List</h2>
-                <div class="input-group">
-                    <input type="text" id="item-input" placeholder="Enter item name (e.g., Milk, Bread, Eggs)" />
-                    <button id="add-item-btn" class="btn btn-primary">Add Item</button>
-                </div>
-                
-                <ul id="shopping-list" class="shopping-list">
-                    <!-- Items will be added here dynamically -->
-                </ul>
+            <div class="main-layout">
+                <aside class="category-sidebar">
+                    <h2>Categories</h2>
+                    <div id="category-list" class="category-list">
+                        <!-- Categories will be populated here -->
+                    </div>
+                </aside>
 
-                <button id="compare-btn" class="btn btn-success" disabled>Compare Prices</button>
-            </section>
+                <div class="main-content">
+                    <section class="shopping-list-section">
+                        <h2>Your Shopping List</h2>
+                        <div class="product-selector">
+                            <div class="selector-group">
+                                <label for="product-select">Select Product:</label>
+                                <select id="product-select" class="product-select">
+                                    <option value="">-- Choose a product --</option>
+                                </select>
+                            </div>
+                            <div class="selector-group">
+                                <label for="brand-select">Brand:</label>
+                                <select id="brand-select" class="brand-select">
+                                    <option value="house">House Brand (Huismerk)</option>
+                                    <option value="premium">Premium Brand</option>
+                                </select>
+                            </div>
+                            <button id="add-item-btn" class="btn btn-primary">Add to List</button>
+                        </div>
+                        
+                        <ul id="shopping-list" class="shopping-list">
+                            <!-- Items will be added here dynamically -->
+                        </ul>
 
-            <section class="results-section" id="results-section" style="display: none;">
-                <h2>Comparison Results</h2>
-                <div id="results-container">
-                    <!-- Results will be displayed here -->
+                        <button id="compare-btn" class="btn btn-success" disabled>Compare Prices</button>
+                    </section>
+
+                    <section class="results-section" id="results-section" style="display: none;">
+                        <h2>Comparison Results</h2>
+                        <div id="results-container">
+                            <!-- Results will be displayed here -->
+                        </div>
+                    </section>
                 </div>
-            </section>
+            </div>
         </main>
 
         <footer>
