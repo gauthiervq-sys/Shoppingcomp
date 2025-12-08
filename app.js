@@ -19,6 +19,9 @@ class ShoppingListApp {
         this.compareBtn = document.getElementById('compare-btn');
         this.resultsSection = document.getElementById('results-section');
         this.resultsContainer = document.getElementById('results-container');
+        
+        // Hide brand selector since we'll auto-select best price
+        this.brandSelect.parentElement.style.display = 'none';
     }
 
     populateCategories() {
@@ -127,7 +130,6 @@ class ShoppingListApp {
 
     addItem() {
         const productKey = this.productSelect.value;
-        const brandType = this.brandSelect.value;
         
         if (!productKey) {
             alert('Please select a product');
@@ -135,7 +137,7 @@ class ShoppingListApp {
         }
         
         const product = availableProducts[productKey];
-        const itemId = `${productKey}-${brandType}`;
+        const itemId = productKey; // Simplified ID since we no longer differentiate by brand at add time
         
         // Check if item already in list
         if (this.shoppingList.some(item => item.id === itemId)) {
@@ -146,9 +148,7 @@ class ShoppingListApp {
         this.shoppingList.push({
             id: itemId,
             productKey: productKey,
-            productName: product.name,
-            brandType: brandType,
-            brandLabel: brandType === 'house' ? 'House Brand' : 'Premium Brand'
+            productName: product.name
         });
         
         this.renderShoppingList();
@@ -174,7 +174,6 @@ class ShoppingListApp {
             li.innerHTML = `
                 <div>
                     <span class="item-name">${item.productName}</span>
-                    <span class="item-brand">${item.brandLabel}</span>
                 </div>
                 <button class="remove-btn" data-item-id="${item.id}">Remove</button>
             `;
@@ -204,19 +203,40 @@ class ShoppingListApp {
                 const productData = store.products[item.productKey];
                 
                 if (productData !== undefined) {
-                    // Get price based on brand type
+                    // Automatically select the best (lowest) price between house and premium
                     let price = null;
+                    let selectedBrand = null;
+                    let brandType = null;
                     
-                    if (item.brandType === 'house' && productData.house !== undefined) {
-                        price = productData.house;
-                    } else if (item.brandType === 'premium' && productData.premium !== undefined) {
-                        price = productData.premium;
+                    const housePrice = productData.house;
+                    const premiumPrice = productData.premium;
+                    
+                    // Choose the lowest price available
+                    if (housePrice !== undefined && premiumPrice !== undefined) {
+                        if (housePrice <= premiumPrice) {
+                            price = housePrice;
+                            selectedBrand = productData.houseBrand || 'House Brand';
+                            brandType = 'house';
+                        } else {
+                            price = premiumPrice;
+                            selectedBrand = productData.premiumBrand || 'Premium Brand';
+                            brandType = 'premium';
+                        }
+                    } else if (housePrice !== undefined) {
+                        price = housePrice;
+                        selectedBrand = productData.houseBrand || 'House Brand';
+                        brandType = 'house';
+                    } else if (premiumPrice !== undefined) {
+                        price = premiumPrice;
+                        selectedBrand = productData.premiumBrand || 'Premium Brand';
+                        brandType = 'premium';
                     }
                     
                     if (price !== null) {
                         itemPrices[item.id] = {
                             name: item.productName,
-                            brand: item.brandLabel,
+                            brand: selectedBrand,
+                            brandType: brandType,
                             price: price
                         };
                         totalPrice += price;
@@ -224,14 +244,16 @@ class ShoppingListApp {
                     } else {
                         itemPrices[item.id] = {
                             name: item.productName,
-                            brand: item.brandLabel,
+                            brand: null,
+                            brandType: null,
                             price: null
                         };
                     }
                 } else {
                     itemPrices[item.id] = {
                         name: item.productName,
-                        brand: item.brandLabel,
+                        brand: null,
+                        brandType: null,
                         price: null
                     };
                 }
@@ -240,6 +262,7 @@ class ShoppingListApp {
             return {
                 store: store.name,
                 storeType: store.type,
+                storeUrl: store.url,
                 totalPrice: totalPrice,
                 availableItems: availableItems,
                 totalItems: this.shoppingList.length,
@@ -285,10 +308,15 @@ class ShoppingListApp {
                 ? '<div style="font-size: 0.85rem; color: #f59e0b; margin-top: 8px;">⚠️ Price shown is incomplete due to unavailable items</div>'
                 : '';
 
+            // Add store URL as hyperlink
+            const storeNameHtml = result.storeUrl 
+                ? `<a href="${result.storeUrl}" target="_blank" rel="noopener noreferrer" class="store-name">${result.store} 🔗</a>`
+                : `<div class="store-name">${result.store}</div>`;
+
             resultDiv.innerHTML = `
                 <div class="store-header">
                     <div>
-                        <div class="store-name">${result.store}</div>
+                        ${storeNameHtml}
                         <div style="font-size: 0.9rem; color: #6b7280; margin-top: 4px;">
                             ${availabilityText}
                         </div>
