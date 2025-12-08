@@ -319,6 +319,17 @@ h2 {
     color: #1f2937;
 }
 
+a.store-name {
+    text-decoration: none;
+    color: #667eea;
+    transition: color 0.3s;
+}
+
+a.store-name:hover {
+    color: #5568d3;
+    text-decoration: underline;
+}
+
 .best-badge {
     background: #10b981;
     color: white;
