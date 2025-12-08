@@ -106,7 +106,79 @@ No installation required! This is a pure HTML/CSS/JavaScript application.
 
 The application runs perfectly on Raspberry Pi 5! Here are the steps:
 
-#### Option 1: Using Chromium Browser (Recommended)
+#### Option 1: Node.js Backend Server (Recommended for Production)
+
+This option sets up a proper Node.js backend server that can run as a system service and start automatically on boot.
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/gauthiervq-sys/Shoppingcomp.git
+   cd Shoppingcomp
+   ```
+
+2. Run the automated setup script:
+   ```bash
+   chmod +x setup-raspberry-pi.sh
+   ./setup-raspberry-pi.sh
+   ```
+
+   The script will:
+   - Install Node.js if not present
+   - Install dependencies
+   - Optionally set up the server to start on boot (systemd service)
+
+3. Access the application:
+   - Local: `http://localhost:3000`
+   - Network: `http://<your-pi-ip>:3000`
+
+**Manual Setup (Alternative):**
+
+If you prefer to set up manually:
+
+1. Install Node.js:
+   ```bash
+   curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+   sudo apt-get install -y nodejs
+   ```
+
+2. Install dependencies:
+   ```bash
+   cd Shoppingcomp
+   npm install
+   ```
+
+3. Start the server:
+   ```bash
+   npm start
+   ```
+
+**Service Management Commands:**
+
+Once the systemd service is set up:
+```bash
+# Check server status
+sudo systemctl status shoppingcomp
+
+# Start the server
+sudo systemctl start shoppingcomp
+
+# Stop the server
+sudo systemctl stop shoppingcomp
+
+# Restart the server
+sudo systemctl restart shoppingcomp
+
+# View server logs
+sudo journalctl -u shoppingcomp -f
+
+# Disable auto-start on boot
+sudo systemctl disable shoppingcomp
+
+# Enable auto-start on boot
+sudo systemctl enable shoppingcomp
+```
+
+#### Option 2: Using Chromium Browser (Simple Testing)
 
 1. Clone the repository:
    ```bash
@@ -119,7 +191,7 @@ The application runs perfectly on Raspberry Pi 5! Here are the steps:
    chromium-browser index.html
    ```
 
-#### Option 2: Using Lightweight HTTP Server
+#### Option 3: Using Python HTTP Server (Quick Testing)
 
 1. Install Python 3 (usually pre-installed on Raspberry Pi OS):
    ```bash
@@ -143,9 +215,54 @@ The application runs perfectly on Raspberry Pi 5! Here are the steps:
    http://localhost:8000
    ```
 
-#### Option 3: Auto-start on Boot (Kiosk Mode)
+#### Option 4: Auto-start on Boot (Kiosk Mode)
 
-To run the app automatically when your Raspberry Pi boots:
+To run the app automatically when your Raspberry Pi boots in kiosk mode:
+
+**Using the Node.js Backend (Recommended):**
+
+1. First, set up the backend service using the setup script (see Option 1 above)
+
+2. Create a kiosk startup script:
+   ```bash
+   nano ~/start-shopping-kiosk.sh
+   ```
+
+3. Add the following content:
+   ```bash
+   #!/bin/bash
+   # Wait for the backend service to start
+   sleep 10
+   chromium-browser --kiosk http://localhost:3000
+   ```
+
+4. Make it executable:
+   ```bash
+   chmod +x ~/start-shopping-kiosk.sh
+   ```
+
+5. Add to autostart:
+   ```bash
+   mkdir -p ~/.config/autostart
+   nano ~/.config/autostart/shopping.desktop
+   ```
+
+6. Add this content:
+   ```
+   [Desktop Entry]
+   Type=Application
+   Name=Shopping Comparison
+   Exec=/home/pi/start-shopping-kiosk.sh
+   ```
+
+7. Reboot to test:
+   ```bash
+   sudo reboot
+   ```
+
+**Using Python HTTP Server (Alternative):**
+
+If you prefer not to use the Node.js backend:
 
 1. Create a startup script:
    ```bash
@@ -187,10 +304,13 @@ To run the app automatically when your Raspberry Pi boots:
 
 #### Performance Tips for Raspberry Pi
 
+- **Use Node.js Backend**: The Node.js backend server provides better performance and reliability than Python's http.server
+- **Enable Compression**: The backend server automatically compresses responses for faster loading
 - **Use Lite OS**: For best performance, consider using Raspberry Pi OS Lite with a lightweight browser
 - **Disable animations**: The app works great even with browser animations disabled
 - **Screen Resolution**: Optimized for 1920x1080, but responsive design works on any resolution
-- **Memory**: The app uses minimal memory (~50MB), perfect for Raspberry Pi 5's 4GB+ RAM
+- **Memory**: The app uses minimal memory (~50MB for frontend + ~30MB for Node.js backend), perfect for Raspberry Pi 5's 4GB+ RAM
+- **Auto-restart**: The systemd service automatically restarts the backend if it crashes
 
 ## Usage Example
 
@@ -215,20 +335,32 @@ Colruyt - €10.85
 
 ## Technology Stack
 
+### Frontend
 - **HTML5**: Structure and semantics
 - **CSS3**: Styling and responsive design
 - **Vanilla JavaScript**: Application logic and interactivity
-- **No Dependencies**: Pure web technologies, no frameworks or libraries required
+- **No Frontend Dependencies**: Pure web technologies, no frameworks or libraries required
+
+### Backend (Optional for Raspberry Pi)
+- **Node.js**: Runtime environment
+- **Express**: Web server framework
+- **Compression**: Response compression middleware for better performance
+- **Systemd**: Service management for auto-start on boot
 
 ## File Structure
 
 ```
 Shoppingcomp/
-├── index.html          # Main HTML page
-├── styles.css          # Styling and layout
-├── app.js              # Application logic
-├── stores-data.js      # Store and product pricing data
-└── README.md           # Documentation
+├── index.html              # Main HTML page
+├── styles.css              # Styling and layout
+├── app.js                  # Frontend application logic
+├── stores-data.js          # Store and product pricing data
+├── server.js               # Node.js backend server
+├── package.json            # Node.js dependencies
+├── setup-raspberry-pi.sh   # Automated setup script for Raspberry Pi
+├── shoppingcomp.service    # Systemd service configuration
+├── .gitignore              # Git ignore file
+└── README.md               # Documentation
 ```
 
 ## Future Enhancements
