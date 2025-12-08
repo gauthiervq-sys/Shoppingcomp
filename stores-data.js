@@ -106,8 +106,7 @@ const stores = [
             "flour": { house: 0.99 },
             "oil": { house: 3.79, premium: 5.5 },
             "salt": { house: 0.89 },
-            "pepper": { house: 2.19, premium: 3.18 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -135,8 +134,7 @@ const stores = [
             "flour": { house: 0.95 },
             "oil": { house: 3.69, premium: 5.35 },
             "salt": { house: 0.85 },
-            "pepper": { house: 2.09, premium: 3.03 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -164,8 +162,7 @@ const stores = [
             "flour": { house: 1.05 },
             "oil": { house: 3.89, premium: 5.64 },
             "salt": { house: 0.95 },
-            "pepper": { house: 2.29, premium: 3.32 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -193,8 +190,7 @@ const stores = [
             "flour": { house: 0.92 },
             "oil": { house: 3.59, premium: 5.21 },
             "salt": { house: 0.82 },
-            "pepper": { house: 2.05, premium: 2.97 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -222,8 +218,7 @@ const stores = [
             "flour": { house: 0.75 },
             "oil": { house: 3.19, premium: 4.63 },
             "salt": { house: 0.65 },
-            "pepper": { house: 1.79, premium: 2.6 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -251,8 +246,7 @@ const stores = [
             "flour": { house: 0.79 },
             "oil": { house: 3.29, premium: 4.77 },
             "salt": { house: 0.69 },
-            "pepper": { house: 1.85, premium: 2.68 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -280,8 +274,7 @@ const stores = [
             "flour": { house: 0.98 },
             "oil": { house: 3.75, premium: 5.44 },
             "salt": { house: 0.88 },
-            "pepper": { house: 2.15, premium: 3.12 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -309,8 +302,7 @@ const stores = [
             "flour": { house: 0.90 },
             "oil": { house: 3.50, premium: 5.08 },
             "salt": { house: 0.80 },
-            "pepper": { house: 2.00, premium: 2.9 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -338,8 +330,7 @@ const stores = [
             "flour": { house: 1.09 },
             "oil": { house: 3.95, premium: 5.73 },
             "salt": { house: 0.99 },
-            "pepper": { house: 2.35, premium: 3.41 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -367,8 +358,7 @@ const stores = [
             "flour": { house: 1.79 },
             "oil": { house: 5.99, premium: 8.69 },
             "salt": { house: 1.49 },
-            "pepper": { house: 3.99, premium: 5.79 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -396,8 +386,7 @@ const stores = [
             "flour": { house: 0.82 },
             "oil": { house: 3.39, premium: 4.92 },
             "salt": { house: 0.72 },
-            "pepper": { house: 1.89, premium: 2.74 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -425,8 +414,7 @@ const stores = [
             "flour": { house: 1.49 },
             "oil": { house: 5.49, premium: 7.96 },
             "salt": { house: 1.29 },
-            "pepper": { house: 3.49, premium: 5.06 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -454,8 +442,7 @@ const stores = [
             "flour": { house: 1.02 },
             "oil": { house: 3.82, premium: 5.54 },
             "salt": { house: 0.92 },
-            "pepper": { house: 2.22, premium: 3.22 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -483,8 +470,7 @@ const stores = [
             "flour": { house: 1.19 },
             "oil": { house: 4.19, premium: 6.08 },
             "salt": { house: 1.09 },
-            "pepper": { house: 2.49, premium: 3.61 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -512,8 +498,7 @@ const stores = [
             "flour": { house: 0.88 },
             "oil": { house: 3.48, premium: 5.05 },
             "salt": { house: 0.78 },
-            "pepper": { house: 1.98, premium: 2.87 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -541,8 +526,7 @@ const stores = [
             "flour": { house: 1.69 },
             "oil": { house: 5.79, premium: 8.4 },
             "salt": { house: 1.39 },
-            "pepper": { house: 3.79, premium: 5.5 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
@@ -622,8 +606,7 @@ const stores = [
             "flour": { house: 1.25 },
             "oil": { house: 4.25, premium: 6.16 },
             "salt": { house: 1.05 },
-            "pepper": { house: 2.45, premium: 3.55 }
-        ,
+            "pepper": { house: 1.99, premium: 3.49 },
             "cornflakes": { house: 2.49, premium: 3.99 },
             "muesli": { house: 3.29, premium: 4.99 }
         }
